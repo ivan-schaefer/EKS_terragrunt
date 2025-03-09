@@ -2,23 +2,36 @@ terraform {
   backend "s3" {}
 }
 
-module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
-  version = "5.0.0"
+resource "aws_vpc" "main" {
+  cidr_block = var.vpc_cidr
 
-  name = var.vpc_name
-  cidr = "10.0.0.0/16"
-
-  azs             = ["eu-central-1a", "eu-central-1b", "eu-central-1c"]
-  public_subnets  = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  private_subnets = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
-
-  enable_nat_gateway = true
-  enable_vpn_gateway = false
- 
   tags = {
-    Terraform   = "true"
-    Environment = "dev"
+    Name = "main-vpc"
   }
-
 }
+
+resource "aws_subnet" "public" {
+  count = length(var.public_subnet_cidrs)
+
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = var.public_subnet_cidrs[count.index]
+  availability_zone       = element(var.azs, count.index)
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "public-subnet-${count.index}"
+  }
+}
+
+resource "aws_subnet" "private" {
+  count = length(var.private_subnet_cidrs)
+
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.private_subnet_cidrs[count.index]
+  availability_zone = element(var.azs, count.index)
+
+  tags = {
+    Name = "private-subnet-${count.index}"
+  }
+}
+

@@ -9,7 +9,7 @@ module "eks" {
   cluster_name    = var.cluster_name
   cluster_version = "1.32"
 
-  ivpc_id         = module.vpc.vpc_id
+  vpc_id         = module.vpc.vpc_id
   subnet_ids      = module.vpc.private_subnets
 
   enable_irsa     = true
@@ -18,4 +18,13 @@ module "eks" {
     Environment = "dev"
   }
 
+
+}
+
+module "vpc" {
+  source = "../vpc"
+
+  vpc_id         = dependency.vpc.outputs.vpc_id
+  public_subnets = dependency.vpc.outputs.public_subnets
+  private_subnets = dependency.vpc.outputs.private_subnets
 }
