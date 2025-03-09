@@ -12,6 +12,6 @@ output "public_subnets" {
 }
 output "vpc_cidr" {
   description = "VPC CIDR block"
-  value       = aws_vpc.main.cidr_block
+  value       = aws_vpc.eks_vpc.cidr_block
 }
 
