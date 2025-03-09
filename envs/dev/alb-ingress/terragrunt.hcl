@@ -6,21 +6,27 @@ terraform {
   source = "../../../modules/alb-ingress"
 }
 
-dependencies {
-  paths = ["../vpc", "../eks"]
-}
-
 dependency "vpc" {
   config_path = "../vpc"
+
+  mock_outputs = {
+    vpc_id        = "vpc-123456"
+    public_subnets = ["subnet-aaa", "subnet-bbb"]
+  }
 }
 
 dependency "eks" {
   config_path = "../eks"
+
+  mock_outputs = {
+    cluster_name    = "mock-cluster"
+    cluster_endpoint = "https://mock.eks.amazonaws.com"
+  }
 }
 
 inputs = {
-  vpc_id  = dependency.vpc.outputs.vpc_id
-  subnets = dependency.vpc.outputs.public_subnets
+  vpc_id     = dependency.vpc.outputs.vpc_id
+  subnets    = dependency.vpc.outputs.public_subnets 
   cluster_name = dependency.eks.outputs.cluster_name
 }
 

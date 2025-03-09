@@ -1,6 +1,10 @@
-variable "cluster_name" {
-  description = "The name of the EKS cluster"
+variable "vpc_id" {
+  description = "VPC ID"
   type        = string
 }
 
+variable "subnets" {
+  description = "List of public subnets"
+  type        = list(string)
+}
 

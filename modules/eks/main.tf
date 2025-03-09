@@ -7,10 +7,11 @@ module "eks" {
   version         = "20.0.0"
 
   cluster_name    = var.cluster_name
-  cluster_version = "1.32"
-
-  vpc_id         = module.vpc.vpc_id
-  subnet_ids      = module.vpc.private_subnets
+  cluster_version = var.cluster_version
+  vpc_id          = var.vpc_id
+  subnet_ids      = var.subnet_ids
+  cluster_endpoint_public_access  = false
+  cluster_endpoint_private_access = true
 
   enable_irsa     = true
 
@@ -21,10 +22,3 @@ module "eks" {
 
 }
 
-module "vpc" {
-  source = "../vpc"
-
-  vpc_id         = dependency.vpc.outputs.vpc_id
-  public_subnets = dependency.vpc.outputs.public_subnets
-  private_subnets = dependency.vpc.outputs.private_subnets
-}

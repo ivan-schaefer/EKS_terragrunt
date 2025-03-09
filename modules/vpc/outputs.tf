@@ -1,15 +1,17 @@
 output "vpc_id" {
-  description = "ID VPC"
-  value       = aws_vpc.main.id
+  value = aws_vpc.eks_vpc.id
+}
+
+
+output "private_subnets" {
+  value = aws_subnet.private[*].id 
 }
 
 output "public_subnets" {
-  description = "Список публичных сабнетов"
-  value       = aws_subnet.public[*].id
+  value = aws_subnet.public[*].id 
 }
-
-output "private_subnets" {
-  description = "Список приватных сабнетов"
-  value       = aws_subnet.private[*].id
+output "vpc_cidr" {
+  description = "VPC CIDR block"
+  value       = aws_vpc.main.cidr_block
 }
 

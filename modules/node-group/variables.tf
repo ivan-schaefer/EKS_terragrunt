@@ -3,9 +3,19 @@ variable "cluster_name" {
   type        = string
 }
 
-variable "instance_type" {
-  description = "Instance type for worker nodes"
+variable "nodes_name" {
+  description = "Name of the EKS node group"
   type        = string
+}
+
+variable "instance_type" {
+  description = "EC2 instance type for the node group"
+  type        = string
+}
+
+variable "subnets" {
+  description = "List of private subnets for the node group"
+  type        = list(string)
 }
 
 variable "desired_size" {
@@ -23,8 +33,7 @@ variable "max_size" {
   type        = number
 }
 
-variable "nodes_name" {
-  description = "Name for nodes"
+variable "cluster_service_cidr" {
+  description = "CIDR block for Kubernetes service network"
   type        = string
 }
-
