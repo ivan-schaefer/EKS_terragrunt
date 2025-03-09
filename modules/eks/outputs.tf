@@ -11,7 +11,7 @@ output "eks_cluster_certificate_authority" {
 }
 
 output "eks_iam_role_arn" {
-  value = module.eks_iam_role_arn
+  value = module.eks.cluster_iam_role_arn
 }
 
 output "eks_cluster_name" {
