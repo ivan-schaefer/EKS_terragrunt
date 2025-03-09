@@ -27,6 +27,6 @@ dependency "eks" {
 inputs = {
   vpc_id     = dependency.vpc.outputs.vpc_id
   subnets    = dependency.vpc.outputs.public_subnets 
-  cluster_name = dependency.eks.outputs.cluster_name
+  cluster_name = dependency.eks.outputs.eks_cluster_name
 }
 

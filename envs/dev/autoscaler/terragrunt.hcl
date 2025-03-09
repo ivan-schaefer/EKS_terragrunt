@@ -16,7 +16,7 @@ dependency "eks" {
 }
 
 inputs = {
-  cluster_name = dependency.eks.outputs.eks_cluster_id
+  cluster_name = dependency.eks.outputs.eks_cluster_name
   iam_role_arn = dependency.eks.outputs.eks_iam_role_arn
 }
 
