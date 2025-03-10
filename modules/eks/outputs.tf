@@ -10,10 +10,15 @@ output "eks_cluster_certificate_authority" {
   value = module.eks.cluster_certificate_authority_data
 }
 
+output "eks_cluster_name" {
+  value = module.eks.cluster_name
+}
+
 output "eks_iam_role_arn" {
   value = module.eks.cluster_iam_role_arn
 }
 
-output "eks_cluster_name" {
-  value = module.eks.cluster_name
+output "eks_iam_role_name" {
+  value = module.eks.cluster_iam_role_name
 }
+

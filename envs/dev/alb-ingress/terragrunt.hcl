@@ -19,7 +19,7 @@ dependency "eks" {
   config_path = "../eks"
 
   mock_outputs = {
-    cluster_name    = "mock-cluster"
+    eks_cluster_name = "mock-cluster"
     cluster_endpoint = "https://mock.eks.amazonaws.com"
   }
 }
@@ -28,5 +28,6 @@ inputs = {
   vpc_id     = dependency.vpc.outputs.vpc_id
   subnets    = dependency.vpc.outputs.public_subnets 
   cluster_name = dependency.eks.outputs.eks_cluster_name
+  security_groups = [dependency.vpc.outputs.alb_security_group]
 }
 

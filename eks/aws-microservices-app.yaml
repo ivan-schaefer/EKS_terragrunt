@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aws-microservices-demo
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/ivan-schaefer/aws-microservices-demo.git"
+    path: "helm-chart"
+    targetRevision: main
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+

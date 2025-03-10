@@ -19,3 +19,9 @@ output "vpc_cidr" {
 output "private_subnet_cidrs" {
   value = [for subnet in aws_subnet.private : subnet.cidr_block]
 }
+
+output "alb_security_group" {
+  description = "List of security groups for ALB"
+  value       = aws_security_group.alb_sg.id
+}
+

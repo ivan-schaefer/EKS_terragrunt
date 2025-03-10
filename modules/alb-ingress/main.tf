@@ -8,8 +8,8 @@ module "alb_ingress" {
 
   name   = "eks-alb-ingress"
   vpc_id = var.vpc_id
-  subnets = var.subnets  
-
+  subnets = var.subnets 
+  security_groups    = var.security_groups
   enable_deletion_protection = false
 }
 

@@ -12,5 +12,5 @@ resource "aws_iam_policy" "eks_autoscaler" {
 
 resource "aws_iam_role_policy_attachment" "eks_autoscaler_attach" {
   policy_arn = aws_iam_policy.eks_autoscaler.arn
-  role       = var.iam_role_arn
+  role       = var.iam_role_name
 }
