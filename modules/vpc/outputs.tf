@@ -1,21 +1,23 @@
 output "vpc_id" {
-  value = aws_vpc.eks_vpc.id
+  description = "The ID of the VPC"
+  value       = module.vpc.vpc_id
 }
 
-
 output "private_subnets" {
-  value = aws_subnet.private[*].id 
+  description = "List of private subnet IDs"
+  value       = module.vpc.private_subnets
 }
 
 output "public_subnets" {
-  value = aws_subnet.public[*].id 
-}
-output "vpc_cidr" {
-  description = "VPC CIDR block"
-  value       = aws_vpc.eks_vpc.cidr_block
-
+  description = "List of public subnet IDs"
+  value       = module.vpc.public_subnets
 }
 
-output "private_subnet_cidrs" {
-  value = [for subnet in aws_subnet.private : subnet.cidr_block]
+output "azs" {
+  description = "List of availability zones"
+  value       = module.vpc.azs
+}
+
+output "subnet_ids" {
+  value       = module.vpc.private_subnets
 }

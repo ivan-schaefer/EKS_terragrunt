@@ -1,9 +1,4 @@
-"[terraform]": {
-  "editor.defaultFormatter": "hashicorp.terraform",
-  "editor.formatOnSave": true
-}
-
 "files.associations": {
-  "*.hcl": "terraform",
-  "terragrunt.hcl": "terraform"
+    "*.hcl": "terraform",
+    "terragrunt.hcl": "terraform"
 }

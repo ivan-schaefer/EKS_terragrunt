@@ -1,16 +1,24 @@
-variable "vpc_cidr" {
-  description = "CIDR VPC"
+variable "cidr" {
+  description = "CIDR block for the VPC"
   type        = string
 }
 
-
-variable "private_subnet_cidrs" {
-  description = "CIDR приватных подсетей"
+variable "availability_zones" {
+  description = "Availability zones"
   type        = list(string)
 }
 
-variable "azs" {
-  description = "Зоны доступности"
+variable "private_subnets" {
+  description = "Private subnets"
   type        = list(string)
 }
 
+variable "public_subnets" {
+  description = "Public subnets"
+  type        = list(string)
+}
+
+variable "environment" {
+  description = "Environment name"
+  type        = string
+}
