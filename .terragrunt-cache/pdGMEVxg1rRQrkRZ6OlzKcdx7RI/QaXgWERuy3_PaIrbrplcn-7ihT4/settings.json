@@ -1,4 +1,0 @@
-"files.associations": {
-    "*.hcl": "terraform",
-    "terragrunt.hcl": "terraform"
-}

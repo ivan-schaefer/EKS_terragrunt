@@ -28,4 +28,4 @@ crash.*.log
 .DS_Store
 
 # --- Terragrunt cache ---
-.terragrunt-cache/envs/dev/monitoring/argocd
+**/.terragrunt-cache/
