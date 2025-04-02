@@ -73,14 +73,15 @@ module "eks" {
       max_size     = 4
       desired_size = 1
 
-      taints = {
+      #taints = {
   
-        addons = {
-          key    = "CriticalAddonsOnly"
-          value  = "true"
-          effect = "NO_SCHEDULE"
-        },
-      }
+      #  addons = {
+      #    key    = "CriticalAddonsOnly"
+      #    value  = "true"
+      #    effect = "NO_SCHEDULE"
+      #  },
+      #}
+      
       node_security_group_tags = {
         "karpenter.sh/discovery" = var.cluster_name
       }
@@ -160,10 +161,10 @@ resource "kubectl_manifest" "karpenter_node_pool" {
           requirements:
             - key: "karpenter.k8s.aws/instance-category"
               operator: In
-              values: ["c", "m", "r"]
+              values: ["t", "m"]
             - key: "karpenter.k8s.aws/instance-cpu"
               operator: In
-              values: ["4", "8", "16", "32"]
+              values: ["2", "4"]
             - key: "karpenter.k8s.aws/instance-hypervisor"
               operator: In
               values: ["nitro"]
