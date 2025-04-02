@@ -3,3 +3,5 @@
 setting.json
 *.tfstate
 *.tfstate.*
+.envs/dev/monitoring/terraform.tfvars
+*.auto.tfvars
