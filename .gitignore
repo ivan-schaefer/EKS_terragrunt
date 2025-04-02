@@ -1,8 +1,31 @@
-.terragrunt-cache/
-.terraform.lock.hcl
-setting.json
+# --- Terraform state files ---
 *.tfstate
 *.tfstate.*
-.envs/dev/monitoring/terraform.tfvars
 *.tfvars
+*.tfvars.json
 *.auto.tfvars
+*.auto.tfvars.json
+
+# --- Sensitive variable templates (но оставляем .example) ---
+!*.tfvars.example
+
+# --- Terraform provider lock file (можно коммитить, если хотите фиксировать версии) ---
+.terraform.lock.hcl
+
+# --- Terraform working directory ---
+.terraform/
+
+# --- Crash logs ---
+crash.log
+crash.*.log
+
+# --- Plan output ---
+*.tfplan
+
+# --- VSCode and IDE junk ---
+.vscode/
+.idea/
+.DS_Store
+
+# --- Terragrunt cache ---
+.terragrunt-cache/

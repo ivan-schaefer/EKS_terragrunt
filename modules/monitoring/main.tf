@@ -80,6 +80,15 @@ resource "helm_release" "prometheus" {
       alertmanager:
         enabled: false
 
+      kubelet:
+        enabled: true
+
+      kubeStateMetrics:
+        enabled: true
+
+      nodeExporter:
+        enabled: true
+    
       prometheus:
         prometheusSpec:
           remoteWrite:
