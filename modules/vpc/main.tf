@@ -16,11 +16,13 @@ module "vpc" {
   enable_nat_gateway = true
   single_nat_gateway = true
 
-  tags = {
-    Environment = var.environment
-    "karpenter.sh/discovery" = "eks-cluster"
+  public_subnet_tags = {
+    "kubernetes.io/role/elb" = 1
   }
+
   private_subnet_tags = {
+  "kubernetes.io/role/internal-elb" = 1
   "karpenter.sh/discovery" = "eks-cluster"
   }
+
 }
