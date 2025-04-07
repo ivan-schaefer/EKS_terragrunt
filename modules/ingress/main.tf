@@ -30,20 +30,58 @@ data "aws_eks_cluster_auth" "eks" {
   name = var.cluster_name
 }
 
-resource "helm_release" "nginx_ingress" {
-  name       = "nginx-ingress"
-  namespace  = "ingress-nginx"
-  chart      = "ingress-nginx"
-  repository = "https://kubernetes.github.io/ingress-nginx"
-  version    = "4.7.1"
+resource "aws_iam_role" "alb_ingress_controller" {
+  name = "alb-ingress-controller-role"
 
-  create_namespace = true
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "alb_ingress_controller_policy" {
+  role       = aws_iam_role.alb_ingress_controller.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "alb_vpc_resource_controller_policy" {
+  role       = aws_iam_role.alb_ingress_controller.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
+}
+
+resource "kubernetes_service_account" "alb_ingress_controller" {
+  metadata {
+    name      = "aws-load-balancer-controller"
+    namespace = "kube-system"
+    annotations = {
+      "eks.amazonaws.com/role-arn" = aws_iam_role.alb_ingress_controller.arn
+    }
+  }
+}
+
+resource "helm_release" "alb_ingress_controller" {
+  name       = "aws-load-balancer-controller"
+  namespace  = "kube-system"
+  repository = "https://aws.github.io/eks-charts"
+  chart      = "aws-load-balancer-controller"
+  version    = "1.5.3"
 
   values = [
     <<-EOT
-    controller:
-      service:
-        type: LoadBalancer
+    clusterName: "${var.cluster_name}"
+    serviceAccount:
+      create: false
+      name: aws-load-balancer-controller
     EOT
   ]
 }
+
+

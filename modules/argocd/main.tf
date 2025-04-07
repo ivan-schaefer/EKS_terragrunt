@@ -35,7 +35,6 @@ data "aws_eks_cluster_auth" "eks" {
   name = var.cluster_name
 }
 
-
 resource "helm_release" "argocd" {
   name       = "argocd"
   namespace  = "argocd"
@@ -45,42 +44,14 @@ resource "helm_release" "argocd" {
 
   create_namespace = true
 
-values = [
-  <<-EOT
-  server:
-    service:
-      type: ClusterIP
-    extraArgs:
-      - --insecure
-  EOT
-]
-}
-
-resource "kubectl_manifest" "argocd_ingress" {
-  yaml_body = <<-YAML
-    apiVersion: networking.k8s.io/v1
-    kind: Ingress
-    metadata:
-      name: argocd-server-ingress
-      namespace: argocd
-      annotations:
-        nginx.ingress.kubernetes.io/rewrite-target: /
-        kubernetes.io/ingress.class: "nginx"  
-    spec:
-      rules:
-        - host: "argo.52.28.145.203.nip.io"
-          http:
-            paths:
-              - path: /
-                pathType: Prefix
-                backend:
-                  service:
-                    name: argocd-server
-                    port:
-                      number: 80
-  YAML
-
-  depends_on = [
-    helm_release.argocd,
+  values = [
+    <<-EOT
+    server:
+      service:
+        type: ClusterIP
+      extraArgs:
+        - --insecure
+    EOT
   ]
 }
+
