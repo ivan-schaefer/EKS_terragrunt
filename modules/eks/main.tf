@@ -63,6 +63,9 @@ module "eks" {
   subnet_ids      = var.subnet_ids
   vpc_id          = var.vpc_id
 
+  node_security_group_tags = {
+  "karpenter.sh/discovery" = var.cluster_name
+}
 
   eks_managed_node_groups = {
     karpenter = {
@@ -73,15 +76,7 @@ module "eks" {
       max_size     = 4
       desired_size = 1
 
-      #taints = {
-  
-      #  addons = {
-      #    key    = "CriticalAddonsOnly"
-      #    value  = "true"
-      #    effect = "NO_SCHEDULE"
-      #  },
-      #}
-      
+     
       node_security_group_tags = {
         "karpenter.sh/discovery" = var.cluster_name
       }
@@ -95,6 +90,13 @@ module "eks" {
   tags = {
     Environment = var.environment
   }
+}
+
+###############################################################################
+# EC2 Spot Service-Linked Role (required for Karpenter Spot support)
+###############################################################################
+resource "aws_iam_service_linked_role" "ec2_spot" {
+  aws_service_name = "spot.amazonaws.com"
 }
 
 ###############################################################################
@@ -117,6 +119,9 @@ module "karpenter" {
   tags = {
     Environment = var.environment
   }
+  depends_on = [
+    aws_iam_service_linked_role.ec2_spot
+  ]
 }
 
 ###############################################################################
@@ -138,11 +143,14 @@ resource "helm_release" "karpenter" {
       clusterName: ${module.eks.cluster_name}
       clusterEndpoint: ${module.eks.cluster_endpoint}
       interruptionQueue: ${module.karpenter.queue_name}
+    controller:
+      topologySpreadConstraints: []
     EOT
   ]
+
+ depends_on = [module.eks]
+
 }
-
-
 ###############################################################################
 # Karpenter Kubectl
 ###############################################################################
@@ -159,20 +167,23 @@ resource "kubectl_manifest" "karpenter_node_pool" {
           nodeClassRef:
             name: default
           requirements:
-            - key: "karpenter.k8s.aws/instance-category"
+            - key: "karpenter.k8s.aws/instance-family"
               operator: In
-              values: ["t", "m"]
-            - key: "karpenter.k8s.aws/instance-cpu"
+              values: ["t3", "t4g", "m6g", "c6g"]
+            - key: "karpenter.k8s.aws/instance-size"
               operator: In
-              values: ["2", "4"]
+              values: ["small", "medium", "large"]
             - key: "karpenter.k8s.aws/instance-hypervisor"
               operator: In
               values: ["nitro"]
-            - key: "karpenter.k8s.aws/instance-generation"
-              operator: Gt
-              values: ["2"]
+            - key: "karpenter.sh/capacity-type"
+              operator: In
+              values: ["spot"]
+            - key: "kubernetes.io/arch"
+              operator: In
+              values: ["amd64", "arm64"]
       limits:
-        cpu: 1000
+        cpu: 500
       disruption:
         consolidationPolicy: WhenEmpty
         consolidateAfter: 30s
