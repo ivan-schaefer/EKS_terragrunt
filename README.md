@@ -5,7 +5,7 @@ This repository contains infrastructure code for deploying and managing an AWS E
 ## 📁 Project Structure
 
 
-```text
+<pre>
 .
 ├── envs/                            # Environment configurations
 │   ├── dev/                         # Development environment
@@ -29,7 +29,7 @@ This repository contains infrastructure code for deploying and managing an AWS E
 │   └── cicd/                        # OIDC GitHub provider module
 │
 ├── terragrunt.hcl                   # Root Terragrunt configuration
-
+</pre>
 
 ## 🚀 Getting Started
 
@@ -40,6 +40,7 @@ This repository contains infrastructure code for deploying and managing an AWS E
 - AWS CLI configured with appropriate credentials (`aws configure`)
 - IAM role with sufficient permissions to create EKS and related resources
 
+
 ### Deployment Example
 
 Navigate to the desired environment directory and run:
@@ -48,3 +49,43 @@ Navigate to the desired environment directory and run:
 cd envs/dev/eu-central-1/eks
 terragrunt init
 terragrunt apply
+
+---
+
+## 🛠 Features
+
+- 🔁 **Modular Design** – Reusable Terraform modules for EKS, VPC, IAM, etc.
+- 🌍 **Multi-environment & Multi-account** – Structured per environment (dev/prod) and AWS account
+- ☸️ **EKS Cluster Bootstrapping** – Includes setup for core components via Helm and ArgoCD
+- ☁️ **Integrated Monitoring** – Prometheus, Loki, and OpenTelemetry installed and connected to Grafana Cloud
+- 🔐 **Secure CI/CD** – GitHub Actions with OIDC-based IAM authentication (no long-lived secrets)
+
+---
+
+## 🔄 GitOps with ArgoCD
+
+The EKS cluster is integrated with [ArgoCD](https://argo-cd.readthedocs.io/) for GitOps-based deployment. After bootstrapping the cluster, ArgoCD is deployed via Helm and synchronized with the applications defined in:
+
+
+## ⚙️ CI/CD with GitHub Actions
+
+This repository supports secure CI/CD pipelines using GitHub Actions with OpenID Connect (OIDC) to assume IAM roles without needing static secrets.
+
+Pipeline steps include:
+
+- ✅ Linting and testing the code
+- 🐳 Building and pushing Docker images to Amazon ECR
+- 🚀 Updating Helm chart versions and triggering ArgoCD sync
+- 🔏 Signing images with Cosign
+- 🔍 Verifying image signatures with Kyverno
+
+---
+
+## 📌 TODO
+
+- [ ] Add documentation for each module in `modules/`
+- [ ] Add backend configuration example (S3 + DynamoDB for state locking)
+- [ ] Add `pre-commit` hooks for Terraform and HCL validation
+- [ ] Add CI pipeline to validate infrastructure changes via `terraform validate` and `terragrunt hclfmt`
+
+---
