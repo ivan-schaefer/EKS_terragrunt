@@ -50,7 +50,7 @@ cd envs/dev/eu-central-1/eks
 terragrunt init
 terragrunt apply
 
----
+```
 
 ## 🛠 Features
 
@@ -60,7 +60,6 @@ terragrunt apply
 - ☁️ **Integrated Monitoring** – Prometheus, Loki, and OpenTelemetry installed and connected to Grafana Cloud
 - 🔐 **Secure CI/CD** – GitHub Actions with OIDC-based IAM authentication (no long-lived secrets)
 
----
 
 ## 🔄 GitOps with ArgoCD
 
@@ -79,7 +78,7 @@ Pipeline steps include:
 - 🔏 Signing images with Cosign
 - 🔍 Verifying image signatures with Kyverno
 
----
+
 
 ## 📌 TODO
 
@@ -87,5 +86,3 @@ Pipeline steps include:
 - [ ] Add backend configuration example (S3 + DynamoDB for state locking)
 - [ ] Add `pre-commit` hooks for Terraform and HCL validation
 - [ ] Add CI pipeline to validate infrastructure changes via `terraform validate` and `terragrunt hclfmt`
-
----
