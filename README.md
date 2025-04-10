@@ -1,5 +1,5 @@
 # EKS Infrastructure with Terragrunt
-[![My Skills](https://skillicons.dev/icons?i=aws,terraform,kubernetes,prometheus,flutter&perline=3)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=aws,terraform,kubernetes,prometheus,grafana&perline=5)](https://skillicons.dev)
 This repository contains infrastructure code for deploying and managing an AWS Elastic Kubernetes Service (EKS) cluster using [Terraform](https://www.terraform.io/) and [Terragrunt](https://terragrunt.gruntwork.io/). The structure is modular, DRY-compliant, and supports multiple environments and AWS accounts.
 
 ## 📁 Project Structure
@@ -74,24 +74,21 @@ terragrunt run-all apply  --terragrunt-include-dir envs/dev/vpc
 The EKS cluster is integrated with [ArgoCD](https://argo-cd.readthedocs.io/) for GitOps-based deployment. After bootstrapping the cluster, ArgoCD is deployed via Helm, all you need is to create an application for ArgoCD
 
 
-
 ## ⚙️ CI/CD with GitHub Actions
 
 This repository supports secure CI/CD pipelines using GitHub Actions with OpenID Connect (OIDC) to assume IAM roles without needing static secrets.
-
-Pipeline steps include:
-
-- ✅ Linting and testing the code
-- 🐳 Building and pushing Docker images to Amazon ECR
-- 🚀 Updating Helm chart versions and triggering ArgoCD sync
-- 🔏 Signing images with Cosign
-- 🔍 Verifying image signatures with Kyverno
-
 
 
 ## 📌 TODO
 
 - [ ] Add documentation for each module in `modules/`
-- [ ] Add backend configuration example (S3 + DynamoDB for state locking)
-- [ ] Add `pre-commit` hooks for Terraform and HCL validation
-- [ ] Add CI pipeline to validate infrastructure changes via `terraform validate` and `terragrunt hclfmt`
+- [ ] Add Security Groups and NACLs for ALB and nodes
+- [ ] Integrate Kyverno with:
+  - [ ] kube-bench
+  - [ ] kube-hunter
+  - [ ] Trivy Operator
+- [ ] Add Loki + Fluent Bit for log shipping
+- [ ] Add OpenTelemetry + Tempo for tracing
+- [ ] Add Cert-Manager and enable TLS on Ingress
+- [ ] Add Kubecost for cost monitoring
+- [ ] Add Cilium CNI with eBPF observability
