@@ -73,11 +73,32 @@ terragrunt run-all apply  --terragrunt-include-dir envs/dev/vpc
 ## 🔄 GitOps with ArgoCD
 
 The EKS cluster is integrated with [ArgoCD](https://argo-cd.readthedocs.io/) for GitOps-based deployment. After bootstrapping the cluster, ArgoCD is deployed via Helm, all you need is to create an application for ArgoCD
-
+Do not forget to get you password
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -
+```
 
 ## ⚙️ CI/CD with GitHub Actions
 
 This repository supports secure CI/CD pipelines using GitHub Actions with OpenID Connect (OIDC) to assume IAM roles without needing static secrets.
+
+
+## 📊 Grafana Connection
+
+All metrics, logs, and traces are collected and sent to **Grafana Cloud**.
+
+To use the monitoring stack:
+
+1. 📋 **Sign up** for a free Grafana Cloud account: https://grafana.com/signup/
+2. ⚙️ After creating your stack, go to **Connections → Kubernetes** in the Grafana Cloud UI.
+3. 🔑 Copy the required credentials:
+   - **Prometheus remote_write endpoint** and API key
+   - **Loki push endpoint** and API key
+   - **Tempo endpoint** (optional for tracing)
+4. 🔐 Store them in your secrets manager (e.g., GitHub Actions, SSM Parameter Store, or Kubernetes secrets).
+5. ✅ Apply the configuration — metrics and logs will start flowing to your Grafana dashboards.
+
+> This setup allows full observability of your EKS cluster using Grafana's managed backend for Prometheus, Loki, and Tempo.
 
 
 ## 📌 TODO
