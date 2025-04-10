@@ -1,5 +1,6 @@
 # EKS Infrastructure with Terragrunt
 [![My Skills](https://skillicons.dev/icons?i=aws,terraform,kubernetes,prometheus,grafana&perline=5)](https://skillicons.dev)
+
 This repository contains infrastructure code for deploying and managing an AWS Elastic Kubernetes Service (EKS) cluster using [Terraform](https://www.terraform.io/) and [Terragrunt](https://terragrunt.gruntwork.io/). The structure is modular, DRY-compliant, and supports multiple environments and AWS accounts.
 
 ## 📁 Project Structure
