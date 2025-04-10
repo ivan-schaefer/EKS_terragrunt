@@ -19,5 +19,5 @@ output "azs" {
 }
 
 output "subnet_ids" {
-  value       = module.vpc.private_subnets
+  value = module.vpc.private_subnets
 }

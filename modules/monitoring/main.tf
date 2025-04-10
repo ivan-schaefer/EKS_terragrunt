@@ -53,7 +53,7 @@ resource "kubernetes_secret" "grafana_remote_write" {
     name      = "kubepromsecret"
     namespace = var.namespace
   }
-  
+
   data = {
     username = var.grafana_cloud_username
     password = var.grafana_cloud_api_key

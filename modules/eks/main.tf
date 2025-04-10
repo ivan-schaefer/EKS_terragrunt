@@ -20,7 +20,7 @@ provider "helm" {
     exec {
       api_version = "client.authentication.k8s.io/v1beta1"
       command     = "aws"
-      args = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
+      args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
     }
   }
 }
@@ -34,7 +34,7 @@ provider "kubectl" {
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "aws"
-    args = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
+    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
   }
 }
 
@@ -47,7 +47,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 20.31"
 
-  cluster_endpoint_public_access = true
+  cluster_endpoint_public_access           = true
   enable_cluster_creator_admin_permissions = true
 
   cluster_addons = {
@@ -57,15 +57,15 @@ module "eks" {
     vpc-cni                = {}
   }
 
-  
+
   cluster_name    = var.cluster_name
   cluster_version = "1.32"
   subnet_ids      = var.subnet_ids
   vpc_id          = var.vpc_id
 
   node_security_group_tags = {
-  "karpenter.sh/discovery" = var.cluster_name
-}
+    "karpenter.sh/discovery" = var.cluster_name
+  }
 
   eks_managed_node_groups = {
     karpenter = {
@@ -76,7 +76,7 @@ module "eks" {
       max_size     = 4
       desired_size = 1
 
-     
+
       node_security_group_tags = {
         "karpenter.sh/discovery" = var.cluster_name
       }
@@ -86,7 +86,7 @@ module "eks" {
       }
     }
   }
-  
+
   tags = {
     Environment = var.environment
   }
@@ -106,8 +106,8 @@ resource "aws_iam_service_linked_role" "ec2_spot" {
 module "karpenter" {
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
   version = "~> 20.0"
-  
-  enable_v1_permissions = true
+
+  enable_v1_permissions           = true
   enable_pod_identity             = true
   create_pod_identity_association = true
 
@@ -128,12 +128,12 @@ module "karpenter" {
 # Karpenter Helm
 ###############################################################################
 resource "helm_release" "karpenter" {
-  namespace           = "kube-system"
-  name                = "karpenter"
-  repository          = "oci://public.ecr.aws/karpenter"
-  chart               = "karpenter"
-  version             = "1.0.0"
-  wait                = false
+  namespace  = "kube-system"
+  name       = "karpenter"
+  repository = "oci://public.ecr.aws/karpenter"
+  chart      = "karpenter"
+  version    = "1.0.0"
+  wait       = false
 
   values = [
     <<-EOT
@@ -148,7 +148,7 @@ resource "helm_release" "karpenter" {
     EOT
   ]
 
- depends_on = [module.eks]
+  depends_on = [module.eks]
 
 }
 ###############################################################################
