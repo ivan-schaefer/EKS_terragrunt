@@ -1,0 +1,20 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: verify-image-signature
+spec:
+  validationFailureAction: Enforce
+  webhookTimeoutSeconds: 10
+  background: true
+  rules:
+    - name: require-signed-image
+      match:
+        any:
+          - resources:
+               kinds:
+               - Pod
+               namespaces:
+               - test-app
+      verifyImages:
+        - image: "ghcr.io/ivan-schaefer/*"
+          key: "https://raw.githubusercontent.com/ivan-schaefer/cosign-pubkey/main/cosign.pub"

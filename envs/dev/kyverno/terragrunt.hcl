@@ -3,11 +3,11 @@ include {
 }
 
 terraform {
-  source = "../../../modules/argocd"
+  source = "../../../modules/=kyverno"
 }
 
 dependencies {
-  paths = ["../vpc", "../eks", "../ingress"]
+  paths = ["../vpc", "../eks", "../ingress", "../argocd", "../monitoring"]
 }
 
 locals {
@@ -15,5 +15,4 @@ locals {
 }
 
 inputs = {
-  cluster_name       = local.env.locals.cluster_name
 }

@@ -13,11 +13,6 @@ terraform {
   }
 }
 
-# Load shared environment configuration from parent directory (e.g., cluster name, environment)
-locals {
-  env = read_terragrunt_config(find_in_parent_folders("env.hcl"))
-}
-
 # Helm provider configuration using EKS token auth
 provider "helm" {
   kubernetes {
@@ -64,14 +59,14 @@ module "eks" {
   }
 
 
-  cluster_name    = local.env.locals.cluster_name
+  cluster_name    = var.cluster_name
   cluster_version = var.eks_version
-  subnet_ids      = var.subnet_ids
+  subnet_ids      = var.private_subnets
   vpc_id          = var.vpc_id
 
   # Used by Karpenter to discover subnets and security groups
   node_security_group_tags = {
-    "karpenter.sh/discovery" = local.env.locals.cluster_name
+    "karpenter.sh/discovery" = var.cluster_name
   }
 
   # Optional managed node group used by Karpenter to bootstrap
@@ -86,7 +81,7 @@ module "eks" {
 
 
       node_security_group_tags = {
-        "karpenter.sh/discovery" = local.env.locals.cluster_name
+        "karpenter.sh/discovery" = var.cluster_name
       }
 
       labels = {
@@ -96,7 +91,7 @@ module "eks" {
   }
 
   tags = {
-    Environment = local.env.locals.environment
+    Environment = var.environment
   }
 }
 
@@ -119,7 +114,7 @@ module "karpenter" {
   enable_pod_identity             = true
   create_pod_identity_association = true
 
-  cluster_name = local.env.locals.cluster_name
+  cluster_name = var.cluster_name
 
   # Optional policies for EC2 instance access (e.g., SSM)
   node_iam_role_additional_policies = {
@@ -127,7 +122,7 @@ module "karpenter" {
   }
 
   tags = {
-    Environment = local.env.locals.environment
+    Environment = var.environment
   }
   depends_on = [
     aws_iam_service_linked_role.ec2_spot
@@ -167,12 +162,12 @@ resource "helm_release" "karpenter" {
 
 resource "kubectl_manifest" "karpenter_node_pool" {
   yaml_body = templatefile("${path.module}/karpenter_node_pool.yaml.tmpl", {
-    instance_families     = var.karpenter_instance_families
-    instance_sizes        = var.karpenter_instance_sizes
-    instance_hypervisors  = var.karpenter_instance_hypervisors
-    capacity_types        = var.karpenter_capacity_types
-    architectures         = var.karpenter_architectures
-    cpu_limit             = var.karpenter_cpu_limit
+    instance_families    = var.karpenter_instance_families
+    instance_sizes       = var.karpenter_instance_sizes
+    instance_hypervisors = var.karpenter_instance_hypervisors
+    capacity_types       = var.karpenter_capacity_types
+    architectures        = var.karpenter_architectures
+    cpu_limit            = var.karpenter_cpu_limit
   })
 
   depends_on = [

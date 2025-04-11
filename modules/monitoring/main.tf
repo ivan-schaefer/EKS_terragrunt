@@ -19,16 +19,14 @@ terraform {
   }
 }
 
-locals {
-  env = read_terragrunt_config(find_in_parent_folders("env.hcl"))
-}
+
 data "aws_eks_cluster" "eks" {
-  name = local.env.locals.cluster_name
+  name = var.cluster_name
 
 }
 
 data "aws_eks_cluster_auth" "eks" {
-  name = local.env.locals.cluster_name
+  name = var.cluster_name
 
 }
 

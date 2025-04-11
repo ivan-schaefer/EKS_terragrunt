@@ -17,3 +17,8 @@ variable "alb_ns" {
   type        = string
   description = "Namespace where the ALB controller service account will be created"
 }
+
+variable "cluster_name" {
+  type        = string
+  description = "Name of the EKS cluster"
+}

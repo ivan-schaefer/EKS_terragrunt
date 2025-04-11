@@ -29,19 +29,14 @@ provider "helm" {
   }
 }
 
-# Load shared environment configuration from parent directory (e.g., cluster name, environment)
-locals {
-  env = read_terragrunt_config(find_in_parent_folders("env.hcl"))
-}
-
 # Fetch EKS cluster metadata
 data "aws_eks_cluster" "eks" {
-  name = local.env.locals.cluster_name
+  name = var.cluster_name
 }
 
 # Fetch EKS token for authentication
 data "aws_eks_cluster_auth" "eks" {
-  name = local.env.locals.cluster_name
+  name = var.cluster_name
 }
 
 # Install ArgoCD using Helm

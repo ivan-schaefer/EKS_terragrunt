@@ -1,0 +1,17 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: pss-restricted
+spec:
+  validationFailureAction: Enforce
+  background: false
+  rules:
+    - name: require-pss-restricted
+      match:
+        resources:
+          kinds: ["Pod"]
+          namespaces: ["test-app"]
+      validate:
+        podSecurity:
+          level: "restricted"
+          version: "latest"

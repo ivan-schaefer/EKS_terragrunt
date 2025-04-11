@@ -4,6 +4,11 @@ include {
 
 terraform {
   source = "../../../modules/vpc"
+
+}
+
+locals {
+  env = read_terragrunt_config(find_in_parent_folders("dev.hcl"))
 }
 
 inputs = {
@@ -12,4 +17,6 @@ inputs = {
   private_subnets    = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
   availability_zones = ["eu-central-1a", "eu-central-1b", "eu-central-1c"]
   vpc_name           = "eks-vpc"
+  environment        = local.env.locals.environment
+  cluster_name       = local.env.locals.cluster_name
 }

@@ -1,0 +1,24 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: verify-attestation-trivy
+spec:
+  validationFailureAction: Enforce
+  rules:
+    - name: verify-vulnerability-score
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      verifyImages:
+        - image: "ghcr.io/your-org/*"
+          key: "https://example.com/cosign.pub"
+          attestations:
+            - name: trivy-scan
+              predicateType: "https://aquasecurity.github.io/trivy/v0.45.0"
+              conditions:
+                - all:
+                    - key: "{{ range .result.Vulnerabilities }}{{ .CVSS.nvd.V3Score }}{{ end }}"
+                      operator: LessThan
+                      value: 7.0

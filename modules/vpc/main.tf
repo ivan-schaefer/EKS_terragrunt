@@ -4,9 +4,6 @@ terraform {
 }
 
 # Load shared environment configuration from parent directory (e.g., cluster name, environment)
-locals {
-  env = read_terragrunt_config(find_in_parent_folders("dev.hcl"))
-}
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
@@ -22,16 +19,19 @@ module "vpc" {
   enable_nat_gateway = true
   single_nat_gateway = true
 
+  manage_default_network_acl    = false
+  manage_default_security_group = false
+
   public_subnet_tags = {
     "kubernetes.io/role/elb" = 1
   }
 
   tags = {
-    Environment = local.env.locals.environment
+    Environment = var.environment
   }
+
   private_subnet_tags = {
-    "kubernetes.io/role/internal-elb" = 1
-    "karpenter.sh/discovery"          = local.env.locals.cluster_name
+    "karpenter.sh/discovery" = var.cluster_name
   }
 
 }

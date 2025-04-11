@@ -1,9 +1,19 @@
+variable "cluster_name" {
+  description = "EKS cluster name"
+  type        = string
+}
+
+variable "environment" {
+  description = "Environment name (e.g., dev, prod)"
+  type        = string
+}
+
 variable "vpc_id" {
   description = "The ID of the VPC where the EKS cluster will be deployed"
   type        = string
 }
 
-variable "subnet_ids" {
+variable "private_subnets" {
   description = "List of private subnet IDs for the EKS cluster"
   type        = list(string)
 }

@@ -7,3 +7,8 @@ variable "github_repository" {
   description = "GitHub repo in format owner/repo (e.g., ivanschaefer/my-app)"
   type        = string
 }
+
+variable "region" { 
+  description = "AWS region to deploy resources"
+  type        = string
+} 

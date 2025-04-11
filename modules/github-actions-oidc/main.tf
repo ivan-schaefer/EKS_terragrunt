@@ -2,12 +2,8 @@ terraform {
   backend "s3" {}
 }
 
-locals {
-  env = read_terragrunt_config(find_in_parent_folders("env.hcl"))
-}
-
 provider "aws" {
-  region = local.env.locals.region
+  region = var.region
 }
 
 # OIDC provider for GitHub Actions

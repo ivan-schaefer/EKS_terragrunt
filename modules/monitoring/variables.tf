@@ -17,6 +17,9 @@ variable "grafana_cloud_api_key" {
 }
 
 variable "secret_name" {
-  type    = string
-  
+  type = string
+}
+
+variable "cluster_name" {
+  type = string
 }

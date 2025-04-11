@@ -1,0 +1,18 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-sa-token
+spec:
+  validationFailureAction: Enforce
+  background: false
+  rules:
+    - name: automount-sa-token
+      match:
+        resources:
+          kinds: ["Pod"]
+          namespaces: ["test-app"]
+      validate:
+        message: "automountServiceAccountToken must be false"
+        pattern:
+          spec:
+            automountServiceAccountToken: false

@@ -1,0 +1,22 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-privileged-escalation
+spec:
+  validationFailureAction: Enforce
+  background: false
+  rules:
+    - name: restrict-privileged-escalation
+      match:
+        resources:
+          kinds:
+            - Pod
+          namespaces:
+            - test-app
+      validate:
+        message: "Privileged escalation is not allowed."
+        pattern:
+          spec:
+            containers:
+              - securityContext:
+                  allowPrivilegeEscalation: false

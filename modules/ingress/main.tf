@@ -19,11 +19,10 @@ terraform {
 }
 
 locals {
-  env = read_terragrunt_config(find_in_parent_folders("env.hcl"))
-    alb_controller_policies = {
-    alb_controller_permissions        = "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess" ### ALB Ingress Controller permissions
-    alb_ingress_controller_policy     = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy" ### EKS Cluster policy
-    alb_vpc_resource_controller_policy = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"   ### EKS VPC Resource Controller policy
+  alb_controller_policies = {
+    alb_controller_permissions         = "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess" ### ALB Ingress Controller permissions
+    alb_ingress_controller_policy      = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"         ### EKS Cluster policy
+    alb_vpc_resource_controller_policy = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController" ### EKS VPC Resource Controller policy
   }
 }
 
@@ -45,11 +44,11 @@ data "aws_caller_identity" "current" {}
 
 ### read data from current AWS EKS cluster
 data "aws_eks_cluster" "eks" {
-  name = local.env.locals.cluster_name
+  name = var.cluster_name
 }
 ### read data from current AWS EKS cluster OIDC provider
 data "aws_eks_cluster_auth" "eks" {
-  name = local.env.locals.cluster_name
+  name = var.cluster_name
 }
 
 ### Create IAM role for ALB Ingress Controller 
@@ -135,7 +134,7 @@ resource "helm_release" "alb_ingress_controller" {
 
   values = [
     <<-EOT
-    clusterName: "${local.env.locals.cluster_name}"
+    clusterName: "${var.cluster_name}"
     serviceAccount:
       create: false
       name: aws-load-balancer-controller
@@ -144,8 +143,6 @@ resource "helm_release" "alb_ingress_controller" {
 
   depends_on = [
     kubernetes_service_account.alb_ingress_controller,
-    aws_iam_role_policy_attachment.alb_ingress_controller_policy,
-    aws_iam_role_policy_attachment.alb_vpc_resource_controller_policy
   ]
 }
 
