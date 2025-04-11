@@ -138,6 +138,7 @@ To use the monitoring stack:
 - [✅] Add OpenTelemetry + Tempo for tracing
 - [✅] Add Kubecost for cost monitoring
 - [50%] Add Cert-Manager and enable TLS on Ingress
+- [ ] Add Valero backup
 - [ ] Add Trivio Operator
 - [ ] Add Istion service mash with TLS
 - [ ] Add documentation for each module in `modules/`
