@@ -105,11 +105,11 @@ To use the monitoring stack:
 ## 📌 TODO
 
 - [✅] Add Security Groups and NACLs for ALB and nodes
-- [ ] Add Cert-Manager and enable TLS on Ingress
+- [50%] Add Cert-Manager and enable TLS on Ingress
 - [ ] Add Istion service mash
 - [✅] Integrate Kyverno
-- [ ] Add Loki + Fluent Bit for log shipping
-- [ ] Add OpenTelemetry + Tempo for tracing
+- [✅] Add Loki + Fluent Bit for log shipping
+- [✅] Add OpenTelemetry + Tempo for tracing
 - [ ] Add Kubecost for cost monitoring
 - [ ] Add documentation for each module in `modules/`
 - [ ] Add Cilium CNI with eBPF observability (test the difference between Istio and Cilium)

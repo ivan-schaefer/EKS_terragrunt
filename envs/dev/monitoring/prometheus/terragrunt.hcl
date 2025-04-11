@@ -3,11 +3,11 @@ include {
 }
 
 terraform {
-  source = "../../../modules/monitoring"
+  source = "../../../../modules/monitoring/prometheus"
 }
 
 dependencies {
-  paths = ["../vpc", "../eks", "../ingress", "../argocd"]
+  paths = ["../../vpc", "../../eks", "../../ingress", "../../argocd"]
 }
 
 locals {
