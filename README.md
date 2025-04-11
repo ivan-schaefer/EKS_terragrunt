@@ -1,8 +1,10 @@
 # EKS Infrastructure with Terragrunt
 <p align="center">
   <img src="https://skillicons.dev/icons?i=aws,terraform,kubernetes,prometheus,grafana&perline=5" alt="CI Tools" />
-  <img src="https://raw.githubusercontent.com/cert-manager/cert-manager/d53c0b9270f8cd90d908460d69502694e1838f5f/logo/logo-small.png" alt="Helm Logo" height="48" style="margin-left: 6px;" />
+  <img src="https://raw.githubusercontent.com/cert-manager/cert-manager/d53c0b9270f8cd90d908460d69502694e1838f5f/logo/logo-small.png" alt="cert logo" height="48" style="margin-left: 6px;" />
+  <img src="https://kyverno.io/blog/2022/10/24/kyverno-1.8-released/kyverno.png" alt="kyverno Logo" height="48" style="margin-left: 6px;" />
 </p>
+
 This repository contains infrastructure code for deploying and managing an AWS Elastic Kubernetes Service (EKS) cluster using [Terraform](https://www.terraform.io/) and [Terragrunt](https://terragrunt.gruntwork.io/). The structure is modular, DRY-compliant, and supports multiple environments and AWS accounts.
 
 ## 📁 Project Structure
