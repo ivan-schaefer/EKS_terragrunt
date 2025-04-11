@@ -8,25 +8,43 @@ This repository contains infrastructure code for deploying and managing an AWS E
 
 <pre>
 .
-├── envs/                            # Environment configurations
-│   ├── dev/                         # Development environment
-│       ├── eks/                     # EKS configuration for dev
-│       ├── monitoring/              # Monitoring stack (Prometheus, etc.)
-│       ├── alb-controller/          # AWS Load Balancer Controller
-│       ├── argocd/                  # ArgoCD installation
-│       ├── vpc/                     # VPC definition
-│       ├── github-actions-oidc/     # OIDC provider for GitHub Actions
-│       └── dev.hcl                  № Env`s variables                   
-│        
-├── modules/                         # Reusable Terraform modules
-│   ├── eks/                         # EKS module
-│   ├── vpc/                         # VPC module
-│   ├── alb-controller/              # ALB Controller module
-│   ├── monitoring/                  # Monitoring stack (Prometheus, etc.)
-│   ├── argocd/                      # ArgoCD module
-│   └── github-actions-oidc/         # OIDC GitHub provider module
-│
-├── terragrunt.hcl                   # Root Terragrunt configuration
+├── envs                             # Environment-specific configurations (e.g. dev, staging, prod)
+│   └── dev                          # Development environment
+│       ├── dev.hcl                  # Shared variables and inputs for the dev environment
+│       ├── argocd                   # ArgoCD installation and setup
+│       ├── certmanager              # cert-manager deployment and DNS/ACME issuer configuration
+│       ├── eks                      # EKS cluster definition and configuration
+│       ├── github-actions-oidc      # OIDC integration for GitHub Actions (IAM roles for CI/CD)
+│       ├── ingress                  # ALB Ingress Controller and Ingress resources
+│       ├── kyverno                  # Kyverno policies and admission controller
+│       ├── monitoring               # Monitoring stack (metrics, logs, tracing, cost)
+│       │   ├── kubecost             # Kubecost setup for cost monitoring and allocation
+│       │   ├── loki                 # Loki deployment (log collection pipeline)
+│       │   ├── prometheus           # Prometheus stack with remote write to Grafana Cloud
+│       │   └── tempo                # OpenTelemetry Collector for tracing to Grafana Tempo
+│       ├── networking               # Custom VPC-level resources
+│       │   ├── network_acls         # Network ACL rules (public/private)
+│       │   └── security_groups      # Custom security groups for ALB, EKS nodes, etc.
+│       └── vpc                      # VPC and subnets module (core networking)
+├── modules                          # Reusable infrastructure modules
+│   ├── argocd                       # ArgoCD Helm chart wrapper
+│   ├── certmanager                  # cert-manager chart with IAM roles
+│   ├── eks                          # EKS cluster creation via terraform-aws-eks
+│   ├── github-actions-oidc          # OIDC setup for GitHub Actions CI/CD
+│   ├── ingress                      # AWS Load Balancer Controller Helm chart
+│   ├── kyverno                      # Kyverno + base policies
+│   │   ├── policies                 # Prebuilt policies (PSS, CIS, Cosign, Trivy)
+│   ├── monitoring                   # Monitoring tools organized by function
+│   │   ├── kubecost                 # Helm chart for cost monitoring
+│   │   ├── loki                     # Helm chart for log shipping to Grafana
+│   │   ├── prometheus               # Prometheus Helm chart and remote write config
+│   │   └── tempo                    # OpenTelemetry Collector and trace exporter
+│   ├── networking                   # Custom VPC resources
+│   │   ├── network_acls             # NACL configuration module
+│   │   └── security_groups          # SGs for EKS nodes, ALB, etc.
+│   └── vpc                          # AWS VPC module wrapper (terraform-aws-modules/vpc/aws)
+└── terragrunt.hcl                   # Root Terragrunt configuration (provider config, remote state)
+
 
 </pre>
 
@@ -95,7 +113,7 @@ To use the monitoring stack:
 3. 🔑 Copy the required credentials:
    - **Prometheus remote_write endpoint** and API key
    - **Loki push endpoint** and API key
-   - **Tempo endpoint** (optional for tracing)
+   - **Tempo endpoint** and API key
 4. 🔐 Store them in your secrets manager (e.g., GitHub Actions, SSM Parameter Store, or Kubernetes secrets).
 5. ✅ Apply the configuration — metrics and logs will start flowing to your Grafana dashboards.
 
@@ -105,10 +123,11 @@ To use the monitoring stack:
 ## 📌 TODO
 
 - [✅] Add Security Groups and NACLs for ALB and nodes
-- [50%] Add Cert-Manager and enable TLS on Ingress
-- [ ] Add Istion service mash with TLS
 - [✅] Integrate Kyverno
 - [✅] Add Loki + Fluent Bit for log shipping
 - [✅] Add OpenTelemetry + Tempo for tracing
 - [✅] Add Kubecost for cost monitoring
+- [50%] Add Cert-Manager and enable TLS on Ingress
+- [ ] Add Trivio Operator
+- [ ] Add Istion service mash with TLS
 - [ ] Add documentation for each module in `modules/`

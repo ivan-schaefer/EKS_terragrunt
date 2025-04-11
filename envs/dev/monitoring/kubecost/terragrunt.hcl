@@ -7,7 +7,7 @@ terraform {
 }
 
 dependencies {
-  paths = ["../../vpc", "../../eks", "../../ingress", "../../argocd", "../../prometheus"]
+  paths = ["../../vpc", "../../eks", "../../ingress", "../../argocd", "../../monitoring/prometheus"]
 }
 
 locals {

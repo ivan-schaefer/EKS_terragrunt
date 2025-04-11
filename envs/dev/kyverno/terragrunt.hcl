@@ -3,11 +3,11 @@ include {
 }
 
 terraform {
-  source = "../../../modules/=kyverno"
+  source = "../../../modules/kyverno"
 }
 
 dependencies {
-  paths = ["../vpc", "../eks", "../ingress", "../argocd", "../monitoring"]
+  paths = ["../vpc", "../eks", "../ingress", "../argocd", "../monitoring/prometheus"]
 }
 
 locals {
