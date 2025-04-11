@@ -10,9 +10,24 @@ terraform {
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.20"
+      version = "~> 2.22"
+    }
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
     }
   }
+}
+
+
+data "aws_eks_cluster" "eks" {
+  name = var.cluster_name
+
+}
+
+data "aws_eks_cluster_auth" "eks" {
+  name = var.cluster_name
+
 }
 
 provider "kubernetes" {

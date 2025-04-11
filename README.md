@@ -107,10 +107,7 @@ To use the monitoring stack:
 - [✅] Add Security Groups and NACLs for ALB and nodes
 - [ ] Add Cert-Manager and enable TLS on Ingress
 - [ ] Add Istion service mash
-- [ ] Integrate Kyverno with:
-  - [ ] kube-bench
-  - [ ] kube-hunter
-  - [ ] Trivy Operator
+- [✅] Integrate Kyverno
 - [ ] Add Loki + Fluent Bit for log shipping
 - [ ] Add OpenTelemetry + Tempo for tracing
 - [ ] Add Kubecost for cost monitoring
