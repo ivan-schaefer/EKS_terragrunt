@@ -1,3 +1,5 @@
+# S3 backend config (managed by Terragrunt, usually overridden)
+
 terraform {
   backend "s3" {}
 }
@@ -27,14 +29,22 @@ provider "helm" {
   }
 }
 
+# Load shared environment configuration from parent directory (e.g., cluster name, environment)
+locals {
+  env = read_terragrunt_config(find_in_parent_folders("env.hcl"))
+}
+
+# Fetch EKS cluster metadata
 data "aws_eks_cluster" "eks" {
-  name = var.cluster_name
+  name = local.env.locals.cluster_name
 }
 
+# Fetch EKS token for authentication
 data "aws_eks_cluster_auth" "eks" {
-  name = var.cluster_name
+  name = local.env.locals.cluster_name
 }
 
+# Install ArgoCD using Helm
 resource "helm_release" "argocd" {
   name       = "argocd"
   namespace  = "argocd"

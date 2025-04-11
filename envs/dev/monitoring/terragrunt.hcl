@@ -11,5 +11,6 @@ dependencies {
 }
 
 inputs = {
-  cluster_name         = "eks-cluster"
+  namespace = "monitoring"
+  secret_name = "kubepromsecret"
 }

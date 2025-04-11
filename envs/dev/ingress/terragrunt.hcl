@@ -11,5 +11,8 @@ dependencies {
 }
 
 inputs = {
-  cluster_name         = "eks-cluster"
+  alb_role_name              = "alb-controller-role"
+  alb_extra_permission_name  = "alb-extra-permissions"
+  alb_sa_name                = "aws-load-balancer-controller"
+  alb_ns                     = "kube-system"
 }

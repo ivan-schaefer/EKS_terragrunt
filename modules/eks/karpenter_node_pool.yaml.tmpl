@@ -1,0 +1,30 @@
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: default
+spec:
+  template:
+    spec:
+      nodeClassRef:
+        name: default
+      requirements:
+        - key: "karpenter.k8s.aws/instance-family"
+          operator: In
+          values: ${jsonencode(instance_families)}
+        - key: "karpenter.k8s.aws/instance-size"
+          operator: In
+          values: ${jsonencode(instance_sizes)}
+        - key: "karpenter.k8s.aws/instance-hypervisor"
+          operator: In
+          values: ${jsonencode(instance_hypervisors)}
+        - key: "karpenter.sh/capacity-type"
+          operator: In
+          values: ${jsonencode(capacity_types)}
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ${jsonencode(architectures)}
+  limits:
+    cpu: ${cpu_limit}
+  disruption:
+    consolidationPolicy: WhenEmpty
+    consolidateAfter: 30s

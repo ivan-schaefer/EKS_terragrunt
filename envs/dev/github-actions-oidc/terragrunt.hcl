@@ -3,7 +3,7 @@ include {
 }
 
 terraform {
-  source = "../../../modules/cicd"
+  source = "../../../modules/github-actions-oidc"
 }
 
 dependencies {

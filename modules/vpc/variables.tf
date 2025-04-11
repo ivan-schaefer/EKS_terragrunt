@@ -18,7 +18,7 @@ variable "public_subnets" {
   type        = list(string)
 }
 
-variable "environment" {
-  description = "Environment name"
+variable "vpc_name" {
+  description = "Name of the VPC"
   type        = string
 }

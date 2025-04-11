@@ -9,7 +9,7 @@ remote_state {
     key            = "eks/${path_relative_to_include()}/terraform.tfstate"
     region         = "eu-central-1"
     encrypt        = true
-    dynamodb_table = "terraform-lock"
+    use_lockfile = true
   }
 }
 

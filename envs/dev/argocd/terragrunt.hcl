@@ -10,6 +10,3 @@ dependencies {
   paths = ["../vpc", "../eks", "../ingress"]
 }
 
-inputs = {
-  cluster_name         = "eks-cluster"
-}

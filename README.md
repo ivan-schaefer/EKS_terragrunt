@@ -15,15 +15,16 @@ This repository contains infrastructure code for deploying and managing an AWS E
 │       ├── alb-controller/          # AWS Load Balancer Controller
 │       ├── argocd/                  # ArgoCD installation
 │       ├── vpc/                     # VPC definition
-│       └── cicd/                    # OIDC provider for GitHub Actions
-│
+│       ├── github-actions-oidc/     # OIDC provider for GitHub Actions
+│       └── dev.hcl                  № Env`s variables                   
+│        
 ├── modules/                         # Reusable Terraform modules
 │   ├── eks/                         # EKS module
 │   ├── vpc/                         # VPC module
 │   ├── alb-controller/              # ALB Controller module
 │   ├── monitoring/                  # Monitoring stack (Prometheus, etc.)
 │   ├── argocd/                      # ArgoCD module
-│   └── cicd/                        # OIDC GitHub provider module
+│   └── github-actions-oidc/         # OIDC GitHub provider module
 │
 ├── terragrunt.hcl                   # Root Terragrunt configuration
 

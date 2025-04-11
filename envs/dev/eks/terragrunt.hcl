@@ -17,12 +17,19 @@ dependency "vpc" {
 }
 
 inputs = {
-  cluster_name         = "eks-cluster"
-  cluster_version      = 1.32
-  vpc_id               = dependency.vpc.outputs.vpc_id
-  subnet_ids           = dependency.vpc.outputs.subnet_ids
-  azs                  = dependency.vpc.outputs.azs
-  environment          = "dev"
+  eks_version                    = 1.32
+  vpc_id                         = dependency.vpc.outputs.vpc_id
+  subnet_ids                     = dependency.vpc.outputs.subnet_ids
+  azs                            = dependency.vpc.outputs.azs
+  min_size                       = 1
+  max_size                       = 3
+  desired_size                   = 2
+  karpenter_instance_families    = ["t3", "t4g", "m6g", "c6g"]
+  karpenter_instance_sizes       = ["small", "medium", "large"]
+  karpenter_instance_hypervisors = ["nitro"]
+  karpenter_capacity_types       = ["spot"]
+  karpenter_architectures        = ["amd64", "arm64"]
+  karpenter_cpu_limit            = 50
 }
 
 

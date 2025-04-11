@@ -1,3 +1,4 @@
+# Terraform backend configuration and required providers
 terraform {
   backend "s3" {}
   required_providers {
@@ -12,6 +13,12 @@ terraform {
   }
 }
 
+# Load shared environment configuration from parent directory (e.g., cluster name, environment)
+locals {
+  env = read_terragrunt_config(find_in_parent_folders("env.hcl"))
+}
+
+# Helm provider configuration using EKS token auth
 provider "helm" {
   kubernetes {
     host                   = module.eks.cluster_endpoint
@@ -25,6 +32,7 @@ provider "helm" {
   }
 }
 
+# Kubectl provider to apply custom Kubernetes manifests
 provider "kubectl" {
   apply_retry_count      = 5
   host                   = module.eks.cluster_endpoint
@@ -39,9 +47,7 @@ provider "kubectl" {
 }
 
 
-###############################################################################
 # EKS
-###############################################################################
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
@@ -58,27 +64,29 @@ module "eks" {
   }
 
 
-  cluster_name    = var.cluster_name
-  cluster_version = "1.32"
+  cluster_name    = local.env.locals.cluster_name
+  cluster_version = var.eks_version
   subnet_ids      = var.subnet_ids
   vpc_id          = var.vpc_id
 
+  # Used by Karpenter to discover subnets and security groups
   node_security_group_tags = {
-    "karpenter.sh/discovery" = var.cluster_name
+    "karpenter.sh/discovery" = local.env.locals.cluster_name
   }
 
+  # Optional managed node group used by Karpenter to bootstrap
   eks_managed_node_groups = {
     karpenter = {
       ami_type       = "BOTTLEROCKET_x86_64"
       instance_types = ["m5.large"]
 
-      min_size     = 1
-      max_size     = 4
-      desired_size = 1
+      min_size     = var.min_size
+      max_size     = var.max_size
+      desired_size = var.desired_size
 
 
       node_security_group_tags = {
-        "karpenter.sh/discovery" = var.cluster_name
+        "karpenter.sh/discovery" = local.env.locals.cluster_name
       }
 
       labels = {
@@ -88,20 +96,20 @@ module "eks" {
   }
 
   tags = {
-    Environment = var.environment
+    Environment = local.env.locals.environment
   }
 }
 
-###############################################################################
-# EC2 Spot Service-Linked Role (required for Karpenter Spot support)
-###############################################################################
+
+# Required Service-Linked Role for EC2 Spot Instances (used by Karpenter)
+
 resource "aws_iam_service_linked_role" "ec2_spot" {
   aws_service_name = "spot.amazonaws.com"
 }
 
-###############################################################################
-# Karpenter
-###############################################################################
+
+# Karpenter IAM and Pod Identity Setup
+
 
 module "karpenter" {
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
@@ -111,22 +119,24 @@ module "karpenter" {
   enable_pod_identity             = true
   create_pod_identity_association = true
 
-  cluster_name = var.cluster_name
+  cluster_name = local.env.locals.cluster_name
+
+  # Optional policies for EC2 instance access (e.g., SSM)
   node_iam_role_additional_policies = {
     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
 
   tags = {
-    Environment = var.environment
+    Environment = local.env.locals.environment
   }
   depends_on = [
     aws_iam_service_linked_role.ec2_spot
   ]
 }
 
-###############################################################################
-# Karpenter Helm
-###############################################################################
+
+# Karpenter Helm Installation (via OCI)
+
 resource "helm_release" "karpenter" {
   namespace  = "kube-system"
   name       = "karpenter"
@@ -151,48 +161,26 @@ resource "helm_release" "karpenter" {
   depends_on = [module.eks]
 
 }
-###############################################################################
-# Karpenter Kubectl
-###############################################################################
+
+# Karpenter NodePool Definition (custom provisioning config)
+
 
 resource "kubectl_manifest" "karpenter_node_pool" {
-  yaml_body = <<-YAML
-    apiVersion: karpenter.sh/v1beta1
-    kind: NodePool
-    metadata:
-      name: default
-    spec:
-      template:
-        spec:
-          nodeClassRef:
-            name: default
-          requirements:
-            - key: "karpenter.k8s.aws/instance-family"
-              operator: In
-              values: ["t3", "t4g", "m6g", "c6g"]
-            - key: "karpenter.k8s.aws/instance-size"
-              operator: In
-              values: ["small", "medium", "large"]
-            - key: "karpenter.k8s.aws/instance-hypervisor"
-              operator: In
-              values: ["nitro"]
-            - key: "karpenter.sh/capacity-type"
-              operator: In
-              values: ["spot"]
-            - key: "kubernetes.io/arch"
-              operator: In
-              values: ["amd64", "arm64"]
-      limits:
-        cpu: 500
-      disruption:
-        consolidationPolicy: WhenEmpty
-        consolidateAfter: 30s
-  YAML
+  yaml_body = templatefile("${path.module}/karpenter_node_pool.yaml.tmpl", {
+    instance_families     = var.karpenter_instance_families
+    instance_sizes        = var.karpenter_instance_sizes
+    instance_hypervisors  = var.karpenter_instance_hypervisors
+    capacity_types        = var.karpenter_capacity_types
+    architectures         = var.karpenter_architectures
+    cpu_limit             = var.karpenter_cpu_limit
+  })
 
   depends_on = [
     kubectl_manifest.karpenter_node_class
   ]
 }
+
+# Karpenter NodeClass Definition (sets subnet, AMI family, etc.)
 
 resource "kubectl_manifest" "karpenter_node_class" {
   yaml_body = <<-YAML

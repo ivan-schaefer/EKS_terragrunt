@@ -19,12 +19,17 @@ terraform {
   }
 }
 
+locals {
+  env = read_terragrunt_config(find_in_parent_folders("env.hcl"))
+}
 data "aws_eks_cluster" "eks" {
-  name = var.cluster_name
+  name = local.env.locals.cluster_name
+
 }
 
 data "aws_eks_cluster_auth" "eks" {
-  name = var.cluster_name
+  name = local.env.locals.cluster_name
+
 }
 
 provider "kubernetes" {
@@ -50,7 +55,7 @@ resource "kubernetes_namespace" "monitoring" {
 resource "kubernetes_secret" "grafana_remote_write" {
   depends_on = [kubernetes_namespace.monitoring]
   metadata {
-    name      = "kubepromsecret"
+    name      = var.secret_name
     namespace = var.namespace
   }
 
@@ -95,10 +100,10 @@ resource "helm_release" "prometheus" {
             - url: "${var.grafana_cloud_prometheus_url}"
               basicAuth:
                 username:
-                  name: kubepromsecret
+                  name: "${var.secret_name}"
                   key: username
                 password:
-                  name: kubepromsecret
+                  name: "${var.secret_name}"
                   key: password
           serviceMonitorSelectorNilUsesHelmValues: false
           podMonitorSelectorNilUsesHelmValues: false
