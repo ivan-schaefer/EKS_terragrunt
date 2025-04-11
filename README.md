@@ -1,9 +1,14 @@
 # EKS Infrastructure with Terragrunt
 <p align="center">
   <img src="https://skillicons.dev/icons?i=aws,terraform,kubernetes,prometheus,grafana&perline=5" alt="CI Tools" />
-  <img src="https://raw.githubusercontent.com/cert-manager/cert-manager/d53c0b9270f8cd90d908460d69502694e1838f5f/logo/logo-small.png" alt="cert logo" height="48" style="margin-left: 6px;" />
-  <img src="https://kyverno.io/blog/2022/10/24/kyverno-1.8-released/kyverno.png" alt="kyverno Logo" height="48" style="margin-left: 6px;" />
+  <img src="https://raw.githubusercontent.com/cert-manager/cert-manager/d53c0b9270f8cd90d908460d69502694e1838f5f/logo/logo-small.png" alt="Cert manager Logo" height="48" style="margin-left: 6px;" />
+  <img src="https://kyverno.io/blog/2022/10/24/kyverno-1.8-released/kyverno.png" alt="KyvernoLogo" height="48" style="margin-left: 6px;" />
+  <img src="https://miro.medium.com/v2/resize:fit:1000/1*N2MujY2OLIfUurqarVwFpw.png" alt="OIDC Logo" height="48" style="margin-left: 6px;" />
+  <img src="https://grafana.com/media/docs/loki/logo-grafana-loki.png" alt="Loki Logo" height="48" style="margin-left: 6px;" />
+  <img src="https://grafana.com/static/assets/img/logos/grafana-tempo.svg" alt="Tempo Logo" height="48" style="margin-left: 6px;" />
+  <img src="https://icon.icepanel.io/Technology/svg/OpenTelemetry.svg" alt="Otel Logo" height="48" style="margin-left: 6px;" />
 </p>
+
 
 This repository contains infrastructure code for deploying and managing an AWS Elastic Kubernetes Service (EKS) cluster using [Terraform](https://www.terraform.io/) and [Terragrunt](https://terragrunt.gruntwork.io/). The structure is modular, DRY-compliant, and supports multiple environments and AWS accounts.
 
