@@ -3,7 +3,7 @@ include {
 }
 
 terraform {
-  source = "../../../../modules/monitoring/loki"
+  source = "../../../../modules/monitoring/tempo"
 }
 
 dependencies {
@@ -16,8 +16,9 @@ locals {
 
 inputs = {
   namespace              = "monitoring"
-  secret_name            = "kubelokisecret"
+  tempo_secret_name      = "kubetempoisecret"
   cluster_name           = local.env.locals.cluster_name
+  
 
 }
 
