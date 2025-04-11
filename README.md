@@ -7,6 +7,7 @@
   <img src="https://grafana.com/media/docs/loki/logo-grafana-loki.png" alt="Loki Logo" height="48" style="margin-left: 6px;" />
   <img src="https://grafana.com/static/assets/img/logos/grafana-tempo.svg" alt="Tempo Logo" height="48" style="margin-left: 6px;" />
   <img src="https://icon.icepanel.io/Technology/svg/OpenTelemetry.svg" alt="Otel Logo" height="48" style="margin-left: 6px;" />
+  <img src="https://appsecmap.com/images/d/Trivy.png" alt="Trivy Logo" height="48" style="margin-left: 6px;" />
 </p>
 
 
