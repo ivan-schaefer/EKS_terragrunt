@@ -38,11 +38,11 @@ provider "helm" {
 }
 
 resource "helm_release" "kubecost" {
-  name             = "kubecost"
-  namespace        = var.namespace
-  repository       = "https://kubecost.github.io/cost-analyzer/"
-  chart            = "cost-analyzer"
-  version          = "2.6" 
+  name       = "kubecost"
+  namespace  = var.namespace
+  repository = "https://kubecost.github.io/cost-analyzer/"
+  chart      = "cost-analyzer"
+  version    = "2.6"
 
   create_namespace = true
 

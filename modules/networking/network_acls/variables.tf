@@ -25,11 +25,11 @@ variable "vpc_cidr_block" {
 variable "eks-public-nacl_name" {
   description = "Name of the public NACL."
   type        = string
-  
+
 }
 
 variable "eks-private-nacl_name" {
   description = "Name of the private NACL."
   type        = string
-  
+
 }

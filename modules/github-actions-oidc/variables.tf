@@ -8,7 +8,7 @@ variable "github_repository" {
   type        = string
 }
 
-variable "region" { 
+variable "region" {
   description = "AWS region to deploy resources"
   type        = string
 } 

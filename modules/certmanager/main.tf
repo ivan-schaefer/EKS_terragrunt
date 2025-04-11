@@ -113,11 +113,11 @@ resource "kubernetes_service_account" "cert_manager" {
 
 # Deploy cert-manager via Helm with existing service account and CRDs enabled
 resource "helm_release" "cert_manager" {
-  name       = "cert-manager"
-  namespace  = "cert-manager"
-  repository = "https://charts.jetstack.io"
-  chart      = "cert-manager"
-  version    = "v1.17.1"
+  name             = "cert-manager"
+  namespace        = "cert-manager"
+  repository       = "https://charts.jetstack.io"
+  chart            = "cert-manager"
+  version          = "v1.17.1"
   create_namespace = true
 
   values = [

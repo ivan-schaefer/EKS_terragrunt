@@ -22,5 +22,5 @@ variable "grafana_cloud_loki_url" {
 }
 
 variable "cluster_name" {
-    type = string
+  type = string
 }
