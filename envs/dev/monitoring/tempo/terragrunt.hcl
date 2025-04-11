@@ -18,7 +18,5 @@ inputs = {
   namespace              = "monitoring"
   tempo_secret_name      = "kubetempoisecret"
   cluster_name           = local.env.locals.cluster_name
-  
-
 }
 
