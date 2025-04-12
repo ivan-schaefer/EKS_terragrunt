@@ -50,7 +50,10 @@ module "eks" {
   cluster_endpoint_public_access           = true
   enable_cluster_creator_admin_permissions = true
 
-  # ❗ Use pre-created SGs to avoid default ones
+  create_node_security_group = false
+  create_cluster_security_group = false
+
+  cluster_security_group_id = var.cluster_sg_id
   node_security_group_id    = var.node_sg_id
 
   cluster_addons = {
@@ -77,8 +80,8 @@ module "eks" {
 
       min_size     = var.min_size
       max_size     = var.max_size
-      desired_size = var.desired_size
-
+      desired_size = var.desired_size 
+      node_security_group_id = var.node_sg_id
 
       node_security_group_tags = {
         "karpenter.sh/discovery" = var.cluster_name

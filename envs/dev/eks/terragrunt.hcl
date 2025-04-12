@@ -54,6 +54,7 @@ inputs = {
   private_subnets                = dependency.vpc.outputs.private_subnets
   azs                            = dependency.vpc.outputs.azs
   node_sg_id                     = dependency.security_groups.outputs.nodes_sg_id
+  cluster_sg_id                  = dependency.security_groups.outputs.cluster_sg_id
   min_size                       = 1
   max_size                       = 4
   desired_size                   = 1

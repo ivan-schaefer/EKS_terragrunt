@@ -26,6 +26,7 @@ locals {
 inputs = {
   alb_sg_name        = "eks-alb-sg"
   eks_nodes_sg_name  = "eks-nodes-sg"
+  eks_cluster_sg_name = "eks-cluster-sg"
   vpc_id             = dependency.vpc.outputs.vpc_id
   cluster_name       = local.env.locals.cluster_name 
 }

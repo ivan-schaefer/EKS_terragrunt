@@ -17,3 +17,8 @@ variable "cluster_name" {
   description = "The name of the EKS cluster."
   type        = string
 }
+
+variable "eks_cluster_sg_name" {
+  description = "The name of the EKS cluster security group."
+  type        = string
+}

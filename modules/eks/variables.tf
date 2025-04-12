@@ -72,3 +72,9 @@ variable "node_sg_id" {
   description = "Security group for EKS worker nodes and Karpenter"
   type        = string
 }
+
+variable "cluster_sg_id" {
+  description = "Security group for EKS cluster"
+  type        = string
+  
+}
