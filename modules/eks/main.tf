@@ -84,14 +84,13 @@ module "eks" {
       labels = {
         "karpenter.sh/controller" = "true"
       }
-    }
   }
 
   tags = {
     Environment = var.environment
   }
 }
-
+}
 ###############################################################################
 # EC2 Spot Service-Linked Role (required for Karpenter Spot support)
 ###############################################################################
@@ -135,6 +134,17 @@ resource "null_resource" "wait_for_eks_ready" {
   depends_on = [module.eks]
 }
 
+resource "null_resource" "wait_for_eks_ready" {
+  provisioner "local-exec" {
+    command = "echo 'Waiting for EKS to be ready...' && sleep 180"
+  }
+
+  triggers = {
+    always_run = "${timestamp()}"
+  }
+
+  depends_on = [module.eks]
+}
 
 ###############################################################################
 # Karpenter Helm
