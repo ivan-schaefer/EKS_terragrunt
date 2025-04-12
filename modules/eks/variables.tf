@@ -68,7 +68,7 @@ variable "desired_size" {
   type        = number
 }
 
-variable "node_sg_id" {
+variable "nodes_sg_id" {
   description = "Security group for EKS worker nodes and Karpenter"
   type        = string
 }
@@ -79,9 +79,14 @@ variable "cluster_sg_id" {
   
 }
 
-variable "iam_karpenter_name" {
-  description = "IAM role name for Karpenter"
+variable "ami_type" {
+  description = "AMI type for the EKS worker nodes"
   type        = string
   
 }
 
+variable "instance_type" { 
+  description = "Instance type for the EKS worker nodes"
+  type        = string
+  
+}

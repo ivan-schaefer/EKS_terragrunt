@@ -41,39 +41,6 @@ provider "kubectl" {
   }
 }
 
-data "aws_iam_policy_document" "ec2_assume_role" {
-  statement {
-    actions = ["sts:AssumeRole"]
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }
-  }
-}
-
-# IAMRole for Karpenter EC2 instances
-module "karpenter_iam_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role"
-  version = "~> 5.30"
-
-  create_role = true
-  role_name   = var.iam_karpenter_name
-
-  trusted_role_services = [
-    "ec2.amazonaws.com"
-  ]
-
-  custom_role_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  ]
-
-  tags = {
-    Environment = var.environment
-  }
-}
-
 #EKS 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
@@ -86,7 +53,7 @@ module "eks" {
   create_cluster_security_group = false
 
   cluster_security_group_id = var.cluster_sg_id
-  node_security_group_id    = var.node_sg_id
+  node_security_group_id    = var.nodes_sg_id
 
   cluster_addons = {
     coredns                = {}
@@ -104,18 +71,17 @@ module "eks" {
   node_security_group_tags = {
     "karpenter.sh/discovery" = var.cluster_name
   }
-
+  
   # Optional managed node group used by Karpenter to bootstrap
   eks_managed_node_groups = {
     karpenter = {
-      ami_type                   = "BOTTLEROCKET_x86_64"
-      instance_types             = ["m5.large"]
+      ami_type                   = var.ami_type
+      instance_types             = [var.instance_type]
       min_size                   = var.min_size
       max_size                   = var.max_size
       desired_size               = var.desired_size 
-      node_security_group_id     = var.node_sg_id
-      iam_role_name              = module.karpenter_iam_role.iam_role_name
-      iam_role_arn               = module.karpenter_iam_role.iam_role_arn
+      node_security_group_id     = var.nodes_sg_id
+
       node_security_group_tags = {
         "karpenter.sh/discovery" = var.cluster_name
       }
@@ -131,6 +97,11 @@ module "eks" {
   }
 }
 
+# EC2 Spot Service-Linked Role (required for Karpenter Spot support)
+
+resource "aws_iam_service_linked_role" "ec2_spot" {
+  aws_service_name = "spot.amazonaws.com"
+}
 
 # Karpenter IAM and Pod Identity Setup
 
@@ -141,10 +112,8 @@ module "karpenter" {
   enable_v1_permissions           = true
   enable_pod_identity             = true
   create_pod_identity_association = true
-  
-  cluster_name = var.cluster_name
 
-  # Optional policies for EC2 instance access (e.g., SSM)
+  cluster_name = var.cluster_name
   node_iam_role_additional_policies = {
     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
@@ -153,13 +122,23 @@ module "karpenter" {
     Environment = var.environment
   }
   depends_on = [
-    aws_iam_service_linked_role.ec2_spot,
-    module.eks
-]
+    aws_iam_service_linked_role.ec2_spot
+  ]
 }
-resource "aws_iam_service_linked_role" "ec2_spot" {
-  aws_service_name = "spot.amazonaws.com"
+# Wait for EKS Cluster to be ready before proceeding with Karpenter installation
+
+resource "null_resource" "wait_for_eks_ready" {
+  provisioner "local-exec" {
+    command = "echo 'Waiting for EKS to be ready...' && sleep 180"
+  }
+
+  triggers = {
+    always_run = "${timestamp()}"
+  }
+
+  depends_on = [module.eks]
 }
+
 # Karpenter Helm Installation (via OCI)
 
 resource "helm_release" "karpenter" {
@@ -183,7 +162,9 @@ resource "helm_release" "karpenter" {
     EOT
   ]
 
-  depends_on = [module.eks]
+  depends_on = [
+    null_resource.wait_for_eks_ready
+  ]
 
 }
 

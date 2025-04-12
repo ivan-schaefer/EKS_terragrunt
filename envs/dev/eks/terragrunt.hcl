@@ -29,7 +29,8 @@ dependency "security_groups" {
   config_path = "../networking/security_groups"
 
   mock_outputs = {
-    nodes_sg_id   = "sg-12345678"
+    cluster_sg_id   = "sg-12345678"
+    nodes_sg_id     = "sg-87654321"
   }
 }
 
@@ -43,11 +44,13 @@ inputs = {
   vpc_id                         = dependency.vpc.outputs.vpc_id
   private_subnets                = dependency.vpc.outputs.private_subnets
   azs                            = dependency.vpc.outputs.azs
-  node_sg_id                     = dependency.security_groups.outputs.nodes_sg_id
+  nodes_sg_id                    = dependency.security_groups.outputs.nodes_sg_id
   cluster_sg_id                  = dependency.security_groups.outputs.cluster_sg_id
   min_size                       = 1
   max_size                       = 4
   desired_size                   = 1
+  ami_type                       = "BOTTLEROCKET_x86_64"
+  instance_type                  = "m5.large"
   karpenter_instance_families    = ["t3", "t4g", "m6g", "c6g"]
   karpenter_instance_sizes       = ["small", "medium", "large"]
   karpenter_instance_hypervisors = ["nitro"]
@@ -56,7 +59,6 @@ inputs = {
   karpenter_cpu_limit            = 50
   environment                    = local.env.locals.environment
   cluster_name                   = local.env.locals.cluster_name
-  iam_karpenter_name             = "karpenter_iam_role_ec2"
 }
 
 
