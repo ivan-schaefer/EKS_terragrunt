@@ -110,7 +110,6 @@ module "karpenter" {
   enable_v1_permissions           = true
   enable_pod_identity             = true
   create_pod_identity_association = true
-
   cluster_name = var.cluster_name
   node_iam_role_additional_policies = {
     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
@@ -123,6 +122,19 @@ module "karpenter" {
     aws_iam_service_linked_role.ec2_spot
   ]
 }
+
+resource "null_resource" "wait_for_eks_ready" {
+  provisioner "local-exec" {
+    command = "echo 'Waiting for EKS to be ready...' && sleep 180"
+  }
+
+  triggers = {
+    always_run = "${timestamp()}"
+  }
+
+  depends_on = [module.eks]
+}
+
 
 ###############################################################################
 # Karpenter Helm
@@ -148,7 +160,9 @@ resource "helm_release" "karpenter" {
     EOT
   ]
 
-  depends_on = [module.eks]
+  depends_on = [
+    null_resource.wait_for_eks_ready
+  ]
 
 }
 ###############################################################################

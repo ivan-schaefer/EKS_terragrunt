@@ -29,3 +29,4 @@ crash.*.log
 
 # --- Terragrunt cache ---
 **/.terragrunt-cache/
+.log
