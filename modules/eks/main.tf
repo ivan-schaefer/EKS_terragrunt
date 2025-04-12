@@ -41,7 +41,6 @@ provider "kubectl" {
   }
 }
 
-
 # EKS
 
 module "eks" {
@@ -51,6 +50,9 @@ module "eks" {
   cluster_endpoint_public_access           = true
   enable_cluster_creator_admin_permissions = true
 
+  # ❗ Use pre-created SGs to avoid default ones
+  node_security_group_id    = var.node_sg_id
+
   cluster_addons = {
     coredns                = {}
     eks-pod-identity-agent = {}
@@ -58,12 +60,11 @@ module "eks" {
     vpc-cni                = {}
   }
 
-
   cluster_name    = var.cluster_name
   cluster_version = var.eks_version
   subnet_ids      = var.private_subnets
   vpc_id          = var.vpc_id
-
+ 
   # Used by Karpenter to discover subnets and security groups
   node_security_group_tags = {
     "karpenter.sh/discovery" = var.cluster_name
@@ -72,7 +73,6 @@ module "eks" {
   # Optional managed node group used by Karpenter to bootstrap
   eks_managed_node_groups = {
     karpenter = {
-      ami_type       = "BOTTLEROCKET_x86_64"
       instance_types = ["m5.large"]
 
       min_size     = var.min_size
@@ -95,16 +95,13 @@ module "eks" {
   }
 }
 
-
 # Required Service-Linked Role for EC2 Spot Instances (used by Karpenter)
 
 resource "aws_iam_service_linked_role" "ec2_spot" {
   aws_service_name = "spot.amazonaws.com"
 }
 
-
 # Karpenter IAM and Pod Identity Setup
-
 
 module "karpenter" {
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
@@ -125,10 +122,10 @@ module "karpenter" {
     Environment = var.environment
   }
   depends_on = [
-    aws_iam_service_linked_role.ec2_spot
-  ]
+    aws_iam_service_linked_role.ec2_spot,
+    module.eks
+]
 }
-
 
 # Karpenter Helm Installation (via OCI)
 
@@ -158,7 +155,6 @@ resource "helm_release" "karpenter" {
 }
 
 # Karpenter NodePool Definition (custom provisioning config)
-
 
 resource "kubectl_manifest" "karpenter_node_pool" {
   yaml_body = templatefile("${path.module}/karpenter_node_pool.yaml.tmpl", {

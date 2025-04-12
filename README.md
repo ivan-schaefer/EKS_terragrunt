@@ -140,5 +140,5 @@ To use the monitoring stack:
 - [50%] Add Cert-Manager and enable TLS on Ingress
 - [ ] Add Valero backup
 - [ ] Add Trivio Operator
-- [ ] Add Istion service mash with TLS
+- [ ] Add Istio service mash with TLS
 - [ ] Add documentation for each module in `modules/`

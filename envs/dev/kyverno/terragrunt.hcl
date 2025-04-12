@@ -15,4 +15,5 @@ locals {
 }
 
 inputs = {
+  cluster_name = local.env.locals.cluster_name
 }

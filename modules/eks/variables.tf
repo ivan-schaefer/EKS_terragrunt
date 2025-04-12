@@ -67,3 +67,8 @@ variable "desired_size" {
   description = "Desired size of the EKS node group"
   type        = number
 }
+
+variable "node_sg_id" {
+  description = "Security group for EKS worker nodes and Karpenter"
+  type        = string
+}
