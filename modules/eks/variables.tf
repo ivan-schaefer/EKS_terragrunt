@@ -78,3 +78,10 @@ variable "cluster_sg_id" {
   type        = string
   
 }
+
+variable "iam_karpenter_name" {
+  description = "IAM role name for Karpenter"
+  type        = string
+  
+}
+

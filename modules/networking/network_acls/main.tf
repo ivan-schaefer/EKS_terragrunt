@@ -43,7 +43,6 @@ resource "aws_network_acl_rule" "public_egress_all" {
   cidr_block     = "0.0.0.0/0"
 }
 
-# Private NACL
 resource "aws_network_acl" "private_nacl" {
   vpc_id     = var.vpc_id
   subnet_ids = var.private_subnets
@@ -53,20 +52,46 @@ resource "aws_network_acl" "private_nacl" {
   }
 }
 
+
 resource "aws_network_acl_rule" "private_ingress_internal" {
   network_acl_id = aws_network_acl.private_nacl.id
   rule_number    = 100
   egress         = false
-  protocol       = "-1" #ALL
+  protocol       = "-1"
   rule_action    = "allow"
   cidr_block     = var.vpc_cidr_block
 }
 
-resource "aws_network_acl_rule" "private_egress_all" {
+
+resource "aws_network_acl_rule" "private_ingress_https" {
   network_acl_id = aws_network_acl.private_nacl.id
   rule_number    = 110
+  egress         = false
+  protocol       = "6"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 443
+  to_port        = 443
+}
+
+resource "aws_network_acl_rule" "private_ingress_ephemeral" {
+  network_acl_id = aws_network_acl.private_nacl.id
+  rule_number    = 120
+  egress         = false
+  protocol       = "6"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 1024
+  to_port        = 65535
+}
+
+
+resource "aws_network_acl_rule" "private_egress_all" {
+  network_acl_id = aws_network_acl.private_nacl.id
+  rule_number    = 130
   egress         = true
-  protocol       = "-1" #ALL
+  protocol       = "-1"
   rule_action    = "allow"
   cidr_block     = "0.0.0.0/0"
 }
+

@@ -5,17 +5,7 @@ include {
 terraform {
   source = "../../../modules/eks"
 
-    before_hook "scale_down_node_group" {
-    commands = ["destroy"]
-    execute  = [
-      "terragrunt",
-      "apply",
-      "-auto-approve",
-      "-target=module.eks.module.eks_managed_node_group[\"karpenter\"]",
-      "-var=desired_size=0"
-    ]
   }
-}
 
 dependency "vpc" {
   config_path = "../vpc"
@@ -66,6 +56,7 @@ inputs = {
   karpenter_cpu_limit            = 50
   environment                    = local.env.locals.environment
   cluster_name                   = local.env.locals.cluster_name
+  iam_karpenter_name             = "karpenter_iam_role_ec2"
 }
 
 
