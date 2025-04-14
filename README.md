@@ -132,6 +132,7 @@ To use the monitoring stack:
 
 ## 📌 TODO
 
+- [ ] Devide EKS module on 3 parts
 - [✅] Add Security Groups and NACLs for ALB and nodes
 - [✅] Integrate Kyverno
 - [✅] Add Loki + Fluent Bit for log shipping
